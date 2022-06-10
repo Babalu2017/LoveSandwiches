@@ -19,7 +19,8 @@ SHEET = GSPREAD_CLIENT.open('love_sandwiches')
 
 def get_sales_data():
     """
-    Get sales figures from user
+    Get sales figures from user.
+    run a while loop to collect a valid string of data from the user via terminal, which must be a string of six numbers separated by commas.The loop will repeatedly request data untill it is valid.
     """
     while True:
         print("Please enter sales data from last market")
@@ -34,6 +35,7 @@ def get_sales_data():
         if (validate_data(sales_data)):
             print("Data is valid!")
             break
+    return sales_data
 
     
 
@@ -42,7 +44,7 @@ def validate_data(values):
     Inside the try, convert all the string values into integer.
     Raise ValueError if string cannot be converted into int or if there aren't excatly 6 values
     """
-    print(values)
+    # print(values)
     try:
         [int(value) for value in values]
         if len(values) != 6:
@@ -53,6 +55,20 @@ def validate_data(values):
     
     return True
 
+def update_sales_worksheet(data):
+    """
+    Update sales worksheet with a new row the user provided
+    """
+    print("Updating sales worksheet...\n")
+    sales_worksheet = SHEET.worksheet('sales')
+    sales_worksheet.append_row(data)
+    print("Sales worksheet updated successfully!\n")
+
+
+
 data = get_sales_data()
+print(data)
+sales_data = [int(num) for num in data]
+update_sales_worksheet(sales_data)
 
 
