@@ -1,3 +1,4 @@
+from hashlib import new
 from pprint import pprint
 import gspread
 from google.oauth2.service_account import Credentials
@@ -95,10 +96,10 @@ def calculate_surplus_data(sales_row):
     """
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
-    pprint(f"from pprint:\n {stock}")
+    # pprint(f"from pprint:\n {stock}")
     stock_row = stock[-1]
-    print(f"stock row: {stock_row}")
-    print(f"sales row: {sales_row}")
+    # print(f"stock row: {stock_row}")
+    # print(f"sales row: {sales_row}")
     surplus_data = []
     for stock,sales in zip(stock_row,sales_row):
         surplus = int(stock) - sales
@@ -125,24 +126,48 @@ def get_the_last_5_entries_sales():
     return columns_list
 
 
+def calculate_stock_data(data):
+    """
+    Calculate the average stock for each item type, adding 10%
+    """
+    print("Calculating stock data...\n")
+    new_stock_data = []
+
+    for column in data:
+        int_column = [int(num) for num in column]
+        average = sum(int_column) / len(int_column)
+        stock_num = average * 1.1
+        new_stock_data.append(round(stock_num))
+    
+    return new_stock_data
+        
+            
+    
+    
+            
+
 
 def main():
     """
     Run all program functions
     """
     data = get_sales_data()
-    print(data)
+    # print(data)
     sales_data = [int(num) for num in data]
     # update_sales_worksheet(sales_data)
     update_worksheet(sales_data,"sales")
     surplus_d = calculate_surplus_data(sales_data)
-    print(surplus_d)
+    # print(surplus_d)
     # update_surplus_worksheet(surplus_d)
     update_worksheet(surplus_d,"surplus")
+    sales_columns = get_the_last_5_entries_sales()
+    avg_stock = calculate_stock_data(sales_columns)
+    update_worksheet(avg_stock,"stock")
+    # print(avg_stock)
 
 print("Welcome to Love Sandwiches Data Automation")
-# main()
-sales_columns = get_the_last_5_entries_sales()
+main()
+
 
 
 
